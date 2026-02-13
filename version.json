@@ -1,9 +1,9 @@
 {
   "core_version": "1.0.0",
-  "core_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/refs/heads/main/core.py",
-  "core_hash": "5289a17787fee833afff4883799e83bc4f2c061cbb6d245a1bcd65933c688954",
+  "core_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/core.py",
+  "core_hash": "00cd81430b287818f9f47967b655a178074c55724697eb2b8403f77dc2debf39",
 
   "html_version": "1.0.0",
-  "html_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/refs/heads/main/index.html",
-  "html_hash": "c4ea655628d256f1b3e69ca84bd6f8bf5fe40e021a9c00bd6e7f933d11169625"
+  "html_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/index.html",
+  "html_hash": "3d6647a52f78382aff6c768c363ce0484f3d165ba24ee6d8377977d114cf2030"
 }

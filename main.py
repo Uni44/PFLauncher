@@ -4,6 +4,7 @@ import hashlib
 import requests
 import importlib.util
 from pathlib import Path
+import webview
 
 BASE_DIR = Path("app")
 BASE_DIR.mkdir(exist_ok=True)
