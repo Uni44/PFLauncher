@@ -9,7 +9,7 @@ BASE_DIR = Path("app")
 BASE_DIR.mkdir(exist_ok=True)
 
 VERSION_FILE = Path("version_local.json")
-REMOTE_VERSION_URL = "https://raw.githubusercontent.com/usuario/repo/main/version.json"
+REMOTE_VERSION_URL = "https://raw.githubusercontent.com/Uni44/PFLauncher/refs/heads/main/version.json"
 
 
 def sha256_file(path):
