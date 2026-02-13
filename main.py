@@ -2,15 +2,24 @@ import os
 import json
 import hashlib
 import requests
+import sys
 import importlib.util
 from pathlib import Path
 import webview
 
-BASE_DIR = Path("app")
+if getattr(sys, 'frozen', False):
+    BASE_PATH = Path(sys._MEIPASS)
+else:
+    BASE_PATH = Path(__file__).parent
+
+BASE_DIR = BASE_PATH / "launcher_data"
 BASE_DIR.mkdir(exist_ok=True)
 
+BASE_DIR_GAME = BASE_PATH / "game_data"
+BASE_DIR_GAME.mkdir(exist_ok=True)
+
 VERSION_FILE = Path("version_local.json")
-REMOTE_VERSION_URL = "https://raw.githubusercontent.com/Uni44/PFLauncher/refs/heads/main/version.json"
+REMOTE_VERSION_URL = "https://raw.githubusercontent.com/Uni44/PFLauncher/main/version.json"
 
 
 def sha256_file(path):
@@ -58,7 +67,7 @@ def check_and_update():
         local["core_version"] = remote["core_version"]
 
     # --- HTML ---
-    html_path = BASE_DIR / "index.html"
+    html_path = BASE_DIR / "index.data"
     if local.get("html_version") != remote["html_version"]:
         print("Actualizando HTML...")
         download_file(remote["html_url"], html_path)
@@ -72,7 +81,7 @@ def check_and_update():
 
 
 def run_core():
-    core_path = BASE_DIR / "core.py"
+    core_path = BASE_DIR / "core.data"
     spec = importlib.util.spec_from_file_location("core", core_path)
     core = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(core)

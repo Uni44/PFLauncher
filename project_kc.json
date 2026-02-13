@@ -1,5 +1,5 @@
 {
-    "name": "TestLauncher",
+    "name": "PFLauncher",
     "main_file": "main.py",
     "run_args": "",
     "interpreter": "python",
@@ -9,11 +9,11 @@
         ".git"
     ],
     "icon_app": "favicon.ico",
-    "version_app": "0.1.0",
+    "version_app": "1.0.0",
     "pyinstaller": {
         "mode": "onefile",
         "contents_directory": ".",
-        "console": false
+        "console": true
     },
     "version": 1
 }
