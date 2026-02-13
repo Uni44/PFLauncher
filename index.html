@@ -36,6 +36,43 @@
             background: rgba(0, 0, 0, 0.6);
         }
 
+        .titlebar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.4);
+            -webkit-app-region: drag;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            z-index: 2;
+        }
+
+        .titlebar .title {
+            font-size: 14px;
+            user-select: none;
+        }
+
+        .window-controls button {
+            -webkit-app-region: no-drag;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            width: 32px;
+            height: 24px;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+
+        .window-controls button:hover {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+
         .container {
             position: relative;
             z-index: 1;
@@ -108,11 +145,18 @@
 <body>
 
 <div class="overlay"></div>
+<div class="titlebar">
+    <span class="title">PFLauncher</span>
+    <div class="window-controls">
+        <button onclick="minimizar()">_</button>
+        <button onclick="cerrar()">×</button>
+    </div>
+</div>
 <div class="container">
     <!-- optional logo image -->
     <img src="assets/logo.png" alt="Logo" class="logo" width="120" height="120">
     <h1>PFLauncher</h1>
-    <button onclick="descargar()">Descargar juego</button>
+    <button id="actionButton" onclick="descargar()">Descargar juego</button>
 
     <div class="progress-bar">
         <div class="progress" id="progress"></div>
@@ -139,10 +183,58 @@
             let result = await window.pywebview.api.descargar_juego();
             log("Proceso finalizado: " + result);
             setProgress(100);
+            // if result indicates updated or up-to-date, switch to play mode
+            setPlayMode();
         } catch (e) {
             log("Error: " + e);
         }
     }
+
+    async function minimizar() {
+        try {
+            await window.pywebview.api.minimizar();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function cerrar() {
+        try {
+            await window.pywebview.api.cerrar();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function verificarEstado() {
+        try {
+            let data = await window.pywebview.api.verificar_estado();
+            return JSON.parse(data);
+        } catch (e) {
+            console.error(e);
+            return {};
+        }
+    }
+
+    async function setPlayMode() {
+        let state = await verificarEstado();
+        const btn = document.getElementById("actionButton");
+        if (state.installed && state.version) {
+            btn.textContent = "Jugar";
+            btn.onclick = async () => {
+                log("Abriendo juego...");
+                let res = await window.pywebview.api.abrir_juego();
+                log(res);
+            };
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        let state = await verificarEstado();
+        if (state.installed && state.version) {
+            setPlayMode();
+        }
+    });
 </script>
 
 </body>

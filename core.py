@@ -44,7 +44,7 @@ def save_local_version(data):
 
 class LauncherAPI:
     def __init__(self, window=None):
-        # window will be set after creation so we can call evaluate_js
+        # window reference is populated later so we can call evaluate_js
         self._window = window
 
     def _log(self, msg, progress=None):
@@ -53,10 +53,52 @@ class LauncherAPI:
             escaped = json.dumps(msg)
             self._window.evaluate_js(f"log({escaped});")
             if progress is not None:
-                # update progress bar too
                 self._window.evaluate_js(f"setProgress({progress});")
         else:
             print(msg)
+
+    # window control API exposed to JS
+    def cerrar(self):
+        if self._window:
+            self._window.destroy()
+        return "cerrando"
+
+    def minimizar(self):
+        if self._window:
+            try:
+                self._window.minimize()
+            except Exception:
+                pass
+        return "minimizado"
+
+    # game status / launcher
+    def verificar_estado(self):
+        """Devuelve diccionario JSON con información de instalación y versión."""
+        local = load_local_version()
+        installed = False
+        exe_path = None
+        # look for an .exe in game_data
+        for p in GAME_DATA.glob("*.exe"):
+            installed = True
+            exe_path = str(p)
+            break
+        return json.dumps({
+            "installed": installed,
+            "version": local.get("game_version"),
+            "exe": exe_path,
+        })
+
+    def abrir_juego(self):
+        """Lanza el ejecutable del juego si existe."""
+        for p in GAME_DATA.glob("*.exe"):
+            try:
+                # Windows: use startfile
+                import os
+                os.startfile(str(p))
+                return "lanzado"
+            except Exception as e:
+                return f"error al abrir: {e}"
+        return "no encontrado"
 
     def descargar_juego(self):
         """Verifica la versión remota y descarga/extrae el ZIP si hay actualización."""
@@ -95,10 +137,7 @@ class LauncherAPI:
             except Exception as e:
                 return f"Error al descargar ZIP: {e}"
 
-            #if remote.get("game_hash") and sha256_file(zip_path) != remote.get("game_hash"):
-            #    return "Hash juego inválido"
-
-            # borrar contenido anterior
+            # actualizar y extraer
             for item in GAME_DATA.iterdir():
                 if item == zip_path:
                     continue
@@ -110,7 +149,6 @@ class LauncherAPI:
                     except Exception:
                         pass
 
-            # extraer y borrar zip
             try:
                 with zipfile.ZipFile(zip_path, 'r') as z:
                     z.extractall(GAME_DATA)
@@ -122,6 +160,9 @@ class LauncherAPI:
 
             local["game_version"] = version
             save_local_version(local)
+            # notify UI to enable play
+            self._log(f"Juego actualizado a {version}")
+            self._window.evaluate_js("setPlayMode();")
             return f"Juego actualizado a {version}"
         else:
             return "No hay actualizaciones"
