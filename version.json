@@ -5,5 +5,9 @@
 
   "html_version": "1.0.0",
   "html_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/index.html",
-  "html_hash": "-"
+  "html_hash": "-",
+
+  "game_version": "1.0.0",
+  "game_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/index.html",
+  "game_hash": "-"
 }

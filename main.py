@@ -7,6 +7,8 @@ import importlib.util
 from pathlib import Path
 import webview
 from importlib.machinery import SourceFileLoader
+import zipfile
+import shutil
 
 BASE_DIR = Path("launcher_data")
 BASE_DIR.mkdir(exist_ok=True)
