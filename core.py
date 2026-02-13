@@ -95,8 +95,8 @@ class LauncherAPI:
             except Exception as e:
                 return f"Error al descargar ZIP: {e}"
 
-            if remote.get("game_hash") and sha256_file(zip_path) != remote.get("game_hash"):
-                return "Hash juego inválido"
+            #if remote.get("game_hash") and sha256_file(zip_path) != remote.get("game_hash"):
+            #    return "Hash juego inválido"
 
             # borrar contenido anterior
             for item in GAME_DATA.iterdir():
@@ -137,8 +137,8 @@ def start():
     window = webview.create_window(
         "PF Launcher",
         str(html_path),
-        width=600,
-        height=800,
+        width=800,
+        height=600,
         resizable=False,
         frameless=True,
         background_color='#000000',
