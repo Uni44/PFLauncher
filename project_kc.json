@@ -13,7 +13,7 @@
     "pyinstaller": {
         "mode": "onefile",
         "contents_directory": ".",
-        "console": true
+        "console": false
     },
     "version": 1
 }

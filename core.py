@@ -77,14 +77,28 @@ class LauncherAPI:
         local = load_local_version()
         installed = False
         exe_path = None
+        
         # look for an .exe in game_data
         for p in GAME_DATA.glob("*.exe"):
             installed = True
             exe_path = str(p)
             break
+        
+        # check remote version
+        try:
+            remote = requests.get(REMOTE_VERSION_URL).json()
+            remote_version = remote.get("game_version")
+        except Exception:
+            remote_version = None
+        
+        local_version = local.get("game_version")
+        needs_update = remote_version and local_version and remote_version != local_version
+        
         return json.dumps({
             "installed": installed,
-            "version": local.get("game_version"),
+            "version": local_version,
+            "remote_version": remote_version,
+            "needs_update": needs_update,
             "exe": exe_path,
         })
 

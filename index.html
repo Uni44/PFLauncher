@@ -110,8 +110,9 @@
             transition: background 0.2s ease;
         }
 
-        button:hover {
-            background: #ff6347;
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .progress-bar {
@@ -146,7 +147,6 @@
 
 <div class="overlay"></div>
 <div class="titlebar">
-    <span class="title">PFLauncher</span>
     <div class="window-controls">
         <button onclick="minimizar()">_</button>
         <button onclick="cerrar()">×</button>
@@ -166,6 +166,8 @@
 </div>
 
 <script>
+    let isDownloading = false;
+
     function log(msg) {
         const logBox = document.getElementById("log");
         logBox.innerHTML += msg + "<br>";
@@ -177,16 +179,31 @@
     }
 
     async function descargar() {
+        if (isDownloading) {
+            log("Descarga ya en progreso...");
+            return;
+        }
+
+        isDownloading = true;
+        const btn = document.getElementById("actionButton");
+        btn.disabled = true;
+        btn.textContent = "Descargando...";
+        btn.style.opacity = "0.6";
+        btn.style.cursor = "not-allowed";
         log("Iniciando descarga...");
 
         try {
             let result = await window.pywebview.api.descargar_juego();
             log("Proceso finalizado: " + result);
             setProgress(100);
-            // if result indicates updated or up-to-date, switch to play mode
-            setPlayMode();
+            await setPlayMode();
         } catch (e) {
             log("Error: " + e);
+        } finally {
+            isDownloading = false;
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
         }
     }
 
@@ -219,7 +236,14 @@
     async function setPlayMode() {
         let state = await verificarEstado();
         const btn = document.getElementById("actionButton");
-        if (state.installed && state.version) {
+        
+        // if there's an update available, show download
+        if (state.needs_update) {
+            btn.textContent = "Actualizar juego";
+            btn.onclick = descargar;
+        }
+        // if game is installed and no update needed, show play
+        else if (state.installed && state.version) {
             btn.textContent = "Jugar";
             btn.onclick = async () => {
                 log("Abriendo juego...");
@@ -227,13 +251,15 @@
                 log(res);
             };
         }
+        // otherwise, show download
+        else {
+            btn.textContent = "Descargar juego";
+            btn.onclick = descargar;
+        }
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
-        let state = await verificarEstado();
-        if (state.installed && state.version) {
-            setPlayMode();
-        }
+        await setPlayMode();
     });
 </script>
 
