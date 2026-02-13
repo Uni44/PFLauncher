@@ -17,7 +17,6 @@ BASE_DIR_GAME.mkdir(exist_ok=True)
 VERSION_FILE = Path("version_local.json")
 REMOTE_VERSION_URL = "https://raw.githubusercontent.com/Uni44/PFLauncher/main/version.json"
 
-
 def sha256_file(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -25,13 +24,11 @@ def sha256_file(path):
             h.update(chunk)
     return h.hexdigest()
 
-
 def download_file(url, dest):
     r = requests.get(url)
     r.raise_for_status()
     with open(dest, "wb") as f:
         f.write(r.content)
-
 
 def load_local_version():
     if VERSION_FILE.exists():
@@ -39,11 +36,9 @@ def load_local_version():
             return json.load(f)
     return {}
 
-
 def save_local_version(data):
     with open(VERSION_FILE, "w") as f:
         json.dump(data, f, indent=4)
-
 
 def check_and_update():
     print("Verificando versiones...")
@@ -75,7 +70,6 @@ def check_and_update():
 
     save_local_version(local)
 
-
 def run_core():
     core_path = BASE_DIR / "core.data"
 
@@ -84,6 +78,11 @@ def run_core():
     module = importlib.util.module_from_spec(spec)
     loader.exec_module(module)
 
+    # Ejecutar manualmente
+    if hasattr(module, "start"):
+        module.start()
+    else:
+        print("El core no tiene función start()")
 
 if __name__ == "__main__":
     check_and_update()
