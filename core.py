@@ -43,6 +43,21 @@ def save_local_version(data):
 
 
 class LauncherAPI:
+    def __init__(self, window=None):
+        # window will be set after creation so we can call evaluate_js
+        self._window = window
+
+    def _log(self, msg, progress=None):
+        """helper to send messages back to HTML logger"""
+        if self._window:
+            escaped = json.dumps(msg)
+            self._window.evaluate_js(f"log({escaped});")
+            if progress is not None:
+                # update progress bar too
+                self._window.evaluate_js(f"setProgress({progress});")
+        else:
+            print(msg)
+
     def descargar_juego(self):
         """Verifica la versión remota y descarga/extrae el ZIP si hay actualización."""
         try:
@@ -54,15 +69,34 @@ class LauncherAPI:
 
         if remote.get("game_version") and local.get("game_version") != remote.get("game_version"):
             version = remote.get("game_version")
-            print(f"Nueva versión del juego detectada: {version}")
+            self._log(f"Nueva versión del juego detectada: {version}")
+
             zip_path = GAME_DATA / "game.zip"
+
+            # stream download so we can report progress
             try:
-                download_file(remote.get("game_url"), zip_path)
+                resp = requests.get(remote.get("game_url"), stream=True, timeout=10)
+                resp.raise_for_status()
+                total = resp.headers.get("Content-Length")
+                total = int(total) if total is not None else None
+
+                downloaded = 0
+                with open(zip_path, "wb") as f:
+                    for chunk in resp.iter_content(1024 * 1024):
+                        if not chunk:
+                            continue
+                        f.write(chunk)
+                        downloaded += len(chunk)
+                        if total:
+                            pct = int(downloaded / total * 100)
+                        else:
+                            pct = None
+                        self._log(f"Descargados {downloaded} bytes", pct)
             except Exception as e:
                 return f"Error al descargar ZIP: {e}"
 
-            #if remote.get("game_hash") and sha256_file(zip_path) != remote.get("game_hash"):
-            #    return "Hash juego inválido"
+            if remote.get("game_hash") and sha256_file(zip_path) != remote.get("game_hash"):
+                return "Hash juego inválido"
 
             # borrar contenido anterior
             for item in GAME_DATA.iterdir():
@@ -100,7 +134,7 @@ def start():
     print("HTML PATH:", html_path)
 
     api = LauncherAPI()
-    webview.create_window(
+    window = webview.create_window(
         "PF Launcher",
         str(html_path),
         width=600,
@@ -110,6 +144,8 @@ def start():
         background_color='#000000',
         js_api=api,
     )
+    # give api a reference to the window so it can send logs/progress callbacks
+    api._window = window
     webview.start()
 
 if __name__ == "__main__":
