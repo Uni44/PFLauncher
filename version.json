@@ -1,0 +1,9 @@
+{
+  "core_version": "1.0.0",
+  "core_url": "https://raw.githubusercontent.com/usuario/repo/main/core.py",
+  "core_hash": "5289a17787fee833afff4883799e83bc4f2c061cbb6d245a1bcd65933c688954",
+
+  "html_version": "1.0.0",
+  "html_url": "https://raw.githubusercontent.com/usuario/repo/main/index.html",
+  "html_hash": "c4ea655628d256f1b3e69ca84bd6f8bf5fe40e021a9c00bd6e7f933d11169625"
+}

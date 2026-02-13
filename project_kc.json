@@ -1,0 +1,19 @@
+{
+    "name": "TestLauncher",
+    "main_file": "main.py",
+    "run_args": "",
+    "interpreter": "python",
+    "ignore_folders": [
+        "__pycache__",
+        "venv",
+        ".git"
+    ],
+    "icon_app": "favicon.ico",
+    "version_app": "0.1.0",
+    "pyinstaller": {
+        "mode": "onefile",
+        "contents_directory": ".",
+        "console": false
+    },
+    "version": 1
+}
