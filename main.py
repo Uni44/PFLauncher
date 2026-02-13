@@ -6,16 +6,12 @@ import sys
 import importlib.util
 from pathlib import Path
 import webview
+from importlib.machinery import SourceFileLoader
 
-if getattr(sys, 'frozen', False):
-    BASE_PATH = Path(sys._MEIPASS)
-else:
-    BASE_PATH = Path(__file__).parent
-
-BASE_DIR = BASE_PATH / "launcher_data"
+BASE_DIR = Path("launcher_data")
 BASE_DIR.mkdir(exist_ok=True)
 
-BASE_DIR_GAME = BASE_PATH / "game_data"
+BASE_DIR_GAME = Path("game_data")
 BASE_DIR_GAME.mkdir(exist_ok=True)
 
 VERSION_FILE = Path("version_local.json")
@@ -56,7 +52,7 @@ def check_and_update():
     local = load_local_version()
 
     # --- CORE ---
-    core_path = BASE_DIR / "core.py"
+    core_path = BASE_DIR / "core.data"
     if local.get("core_version") != remote["core_version"]:
         print("Actualizando core...")
         download_file(remote["core_url"], core_path)
@@ -67,7 +63,7 @@ def check_and_update():
         local["core_version"] = remote["core_version"]
 
     # --- HTML ---
-    html_path = BASE_DIR / "index.data"
+    html_path = BASE_DIR / "index.html"
     if local.get("html_version") != remote["html_version"]:
         print("Actualizando HTML...")
         download_file(remote["html_url"], html_path)
@@ -82,9 +78,11 @@ def check_and_update():
 
 def run_core():
     core_path = BASE_DIR / "core.data"
-    spec = importlib.util.spec_from_file_location("core", core_path)
-    core = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(core)
+
+    loader = SourceFileLoader("core", str(core_path))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
 
 
 if __name__ == "__main__":
