@@ -148,7 +148,7 @@
 <div class="overlay"></div>
 <div class="titlebar">
     <div class="window-controls">
-        <span class="title"> </span>
+        <span class="title">PF Launcher 1.0.0</span>
         <button onclick="minimizar()">_</button>
         <button onclick="cerrar()">×</button>
     </div>
@@ -268,6 +268,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
+        console.log('DOMContentLoaded: ejecutando setPlayMode');
         await setPlayMode();
     });
 </script>
