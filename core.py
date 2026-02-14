@@ -44,7 +44,7 @@ def save_local_version(data):
 
 class LauncherAPI:
     def __init__(self, window=None):
-        # window reference is populated later so we can call evaluate_js
+        print("LauncherAPI inicializada")
         self._window = window
 
     def _log(self, msg, progress=None):
@@ -74,6 +74,7 @@ class LauncherAPI:
     # game status / launcher
     def verificar_estado(self):
         """Devuelve diccionario JSON con información de instalación y versión."""
+        print("verificar_estado llamado")
         local = load_local_version()
         installed = False
         exe_path = None
@@ -204,8 +205,8 @@ def start():
     window = webview.create_window(
         "PF Launcher",
         str(html_path),
-        width=1400,
-        height=800,
+        width=1200,
+        height=700,
         resizable=False,
         frameless=True,
         background_color='#000000',
