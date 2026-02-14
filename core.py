@@ -204,8 +204,8 @@ def start():
     window = webview.create_window(
         "PF Launcher",
         str(html_path),
-        width=800,
-        height=600,
+        width=1400,
+        height=800,
         resizable=False,
         frameless=True,
         background_color='#000000',
