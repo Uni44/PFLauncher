@@ -122,6 +122,9 @@ class LauncherAPI:
                 # Windows: use startfile
                 import os
                 os.startfile(str(p))
+                # Cerrar launcher después de abrir el juego
+                if self._window:
+                    self._window.destroy()
                 return "lanzado"
             except Exception as e:
                 return f"error al abrir: {e}"
@@ -130,9 +133,15 @@ class LauncherAPI:
     def descargar_juego(self):
         """Verifica la versión remota y descarga/extrae el ZIP si hay actualización."""
         try:
-            remote = requests.get(REMOTE_VERSION_URL).json()
+            remote = requests.get(REMOTE_VERSION_URL, timeout=5).json()
         except Exception as e:
-            return f"Error al obtener la versión remota: {e}"
+            local = load_local_version()
+            # Si no hay internet pero el juego está instalado, permitir continuar
+            if local.get("game_version"):
+                self._log("Sin conexión a internet, usando versión local")
+                return "Sin conexión, usando versión local"
+            # Si no hay internet y el juego no está instalado, error
+            return f"Error de conexión: sin internet. {e}"
 
         local = load_local_version()
 
@@ -161,6 +170,38 @@ class LauncherAPI:
                         else:
                             pct = None
                         self._log(f"Descargados {downloaded} bytes", pct)
+            except Exception as e:
+                return f"Error al descargar ZIP: {e}"
+
+            # actualizar y extraer
+            for item in GAME_DATA.iterdir():
+                if item == zip_path:
+                    continue
+                if item.is_dir():
+                    shutil.rmtree(item)
+                else:
+                    try:
+                        item.unlink()
+                    except Exception:
+                        pass
+
+            try:
+                with zipfile.ZipFile(zip_path, 'r') as z:
+                    z.extractall(GAME_DATA)
+            except zipfile.BadZipFile:
+                return "Error: archivo zip corrupto"
+            finally:
+                if zip_path.exists():
+                    zip_path.unlink()
+
+            local["game_version"] = version
+            save_local_version(local)
+            # notify UI to enable play
+            self._log(f"Juego actualizado a {version}")
+            self._window.evaluate_js("setPlayMode();")
+            return f"Juego actualizado a {version}"
+        else:
+            return "No hay actualizaciones"
             except Exception as e:
                 return f"Error al descargar ZIP: {e}"
 

@@ -2,177 +2,225 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PFLauncher</title>
-    <!-- Google font for a modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PF Launcher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --zzz-yellow: #ffda00;
+            --zzz-pink: #ff69b4;
+            --zzz-dark: #1a1a1a;
+            --zzz-bg-glass: rgba(0, 0, 0, 0.6);
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+        * { box-sizing: border-box; }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
             font-family: 'Roboto', sans-serif;
-            color: #fff;
-            /* background image should be placed alongside index.html or adjust path */
-            background: url('background.jpg') no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-        }
-
-        .titlebar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 32px;
-            background: rgba(0, 0, 0, 0.4);
-            -webkit-app-region: drag;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 10px;
-            z-index: 2;
-        }
-
-        .titlebar .title {
-            font-size: 14px;
-            user-select: none;
-        }
-
-        .window-controls button {
-            -webkit-app-region: no-drag;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 16px;
-            width: 32px;
-            height: 24px;
-            cursor: pointer;
-            margin-left: 4px;
-        }
-
-        .window-controls button:hover {
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            width: 500px;
-            max-width: 90%;
-            padding: 30px;
-            background: rgba(24, 24, 24, 0.85);
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.7);
-            text-align: center;
-        }
-
-        .logo {
-            margin-bottom: 25px;
-            /* replace with your own logo file */
-        }
-
-        h1 {
-            margin: 0 0 20px;
-            font-size: 28px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #ff7f50;
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: #333;
-            border-radius: 6px;
-            margin-top: 20px;
             overflow: hidden;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
         }
 
-        .progress {
+        /* --- UI OVERLAY --- */
+        .main-screen {
+            position: relative;
+            width: 100%;
             height: 100%;
-            width: 0%;
-            background: #ff7f50;
-            transition: width 0.3s;
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+            background: linear-gradient(to right, rgba(255,105,180, 0.1), transparent);
         }
 
-        .log {
-            margin-top: 20px;
-            font-size: 13px;
-            text-align: left;
-            max-height: 120px;
-            overflow-y: auto;
-            background: #111;
-            padding: 10px;
-            border-radius: 8px;
+        /* Barra Superior */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-app-region: drag;
+            z-index: 10;
+        }
+
+        .game-logo {
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 900;
+            font-size: 32px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+        }
+
+        .window-controls { -webkit-app-region: no-drag; }
+        .window-controls button {
+            background: none; border: none; color: white;
+            font-size: 20px; cursor: pointer; padding: 5px 10px;
+        }
+
+        /* Sección Izquierda: Noticias */
+        .left-content {
+            margin-top: auto;
+            margin-bottom: 20px;
+            width: 350px;
+            z-index: 5;
+        }
+
+        .news-panel {
+            background: var(--zzz-bg-glass);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border-left: 5px solid var(--zzz-yellow);
+        }
+
+        .news-tabs { display: flex; gap: 15px; margin-bottom: 10px; font-weight: bold; }
+        .news-tabs span { cursor: pointer; opacity: 0.6; }
+        .news-tabs .active { opacity: 1; border-bottom: 2px solid var(--zzz-yellow); }
+
+        .news-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Sección Derecha Inferior: Botón de Inicio */
+        .bottom-right {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #actionButton {
+            background: var(--zzz-yellow);
+            color: black;
+            border: none;
+            padding: 15px 60px;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 900;
+            font-size: 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 0 20px rgba(255, 218, 0, 0.4);
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        #actionButton:hover { transform: scale(1.05); background: #fff; }
+        #actionButton:active { transform: scale(0.95); }
+
+        .btn-play-icon {
+            background: black;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* Barra Lateral de Redes */
+        .side-socials {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 8px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .side-socials img { width: 24px; opacity: 0.8; cursor: pointer; }
+
+        /* Consola de Log oculta o minimalista */
+        .minimal-log {
+            position: absolute;
+            bottom: 120px;
+            right: 40px;
+            text-align: right;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .progress-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+        }
+        #progress {
+            width: 0%;
+            height: 100%;
+            background: var(--zzz-yellow);
+            transition: width 0.3s;
         }
     </style>
 </head>
 <body>
 
-<div class="overlay"></div>
-<div class="titlebar">
-    <div class="window-controls">
-        <span class="title">PF Launcher 1.0.0e</span>
-        <button onclick="minimizar()">_</button>
-        <button onclick="cerrar()">×</button>
-    </div>
-</div>
-<div class="container">
-    <!-- optional logo image -->
-    <img src="assets/logo.png" alt="Logo" class="logo" width="120" height="120">
-    <h1>PFLauncher</h1>
-    <button id="actionButton" onclick="descargar()">Descargar juego</button>
-
-    <div class="progress-bar">
-        <div class="progress" id="progress"></div>
+<div class="main-screen">
+    <div class="top-bar">
+        <div class="game-logo">PF Launcher</div>
+        <div class="window-controls">
+            <button onclick="minimizar()">—</button>
+            <button onclick="cerrar()">✕</button>
+        </div>
     </div>
 
-    <div class="log" id="log"></div>
+    <div class="side-socials">
+        <span>🌐</span><span>📱</span><span>💬</span><span>YT</span>
+    </div>
+
+    <div class="left-content">
+        <div class="news-panel">
+            <div class="news-tabs">
+                <span class="active">Anuncios</span>
+                <span>Noticias</span>
+            </div>
+            <div id="news-list">
+                <div class="news-item"><span>Actualización de versión 2.6...</span> <span>02/04</span></div>
+                <div class="news-item"><span>Evento «Armonía de delusiones»</span> <span>02/04</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="minimal-log" id="log">Sistema listo...</div>
+
+    <div class="bottom-right">
+        <button id="actionButton" onclick="descargar()">
+            <div class="btn-play-icon">▶</div>
+            <span id="btnText">Comenzar juego</span>
+        </button>
+    </div>
+
+    <div class="progress-container">
+        <div id="progress"></div>
+    </div>
 </div>
 
 <script>
+    // Mantengo tu lógica funcional original pero adaptada a los nuevos IDs
     let isDownloading = false;
 
     function log(msg) {
-        const logBox = document.getElementById("log");
-        logBox.innerHTML += msg + "<br>";
-        logBox.scrollTop = logBox.scrollHeight;
+        document.getElementById("log").innerText = msg;
     }
 
     function setProgress(value) {
@@ -180,97 +228,53 @@
     }
 
     async function descargar() {
-        if (isDownloading) {
-            log("Descarga ya en progreso...");
-            return;
-        }
-
+        if (isDownloading) return;
         isDownloading = true;
+        
         const btn = document.getElementById("actionButton");
-        btn.disabled = true;
-        btn.textContent = "Descargando...";
-        btn.style.opacity = "0.6";
-        btn.style.cursor = "not-allowed";
+        const btnText = document.getElementById("btnText");
+        
+        btn.style.opacity = "0.7";
+        btnText.textContent = "Descargando...";
         log("Iniciando descarga...");
 
         try {
             let result = await window.pywebview.api.descargar_juego();
-            log("Proceso finalizado: " + result);
             setProgress(100);
             await setPlayMode();
         } catch (e) {
             log("Error: " + e);
         } finally {
             isDownloading = false;
-            btn.disabled = false;
             btn.style.opacity = "1";
-            btn.style.cursor = "pointer";
-        }
-    }
-
-    async function minimizar() {
-        try {
-            await window.pywebview.api.minimizar();
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async function cerrar() {
-        try {
-            await window.pywebview.api.cerrar();
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    async function verificarEstado() {
-        try {
-            let data = await window.pywebview.api.verificar_estado();
-            let state = JSON.parse(data);
-            console.log("Estado verificado:", state);
-            return state;
-        } catch (e) {
-            console.error("Error al verificar estado:", e);
-            return {};
         }
     }
 
     async function setPlayMode() {
-        let state = await verificarEstado();
-        const btn = document.getElementById("actionButton");
-        
-        console.log("setPlayMode - estado:", state);
-        console.log("installed:", state.installed, "version:", state.version, "needs_update:", state.needs_update);
-        
-        // if there's an update available, show download
-        if (state.needs_update) {
-            console.log("Mostrando: Actualizar juego");
-            btn.textContent = "Actualizar juego";
-            btn.onclick = descargar;
-        }
-        // if game is installed and no update needed, show play
-        else if (state.installed && state.version) {
-            console.log("Mostrando: Jugar");
-            btn.textContent = "Jugar";
-            btn.onclick = async () => {
-                log("Abriendo juego...");
-                let res = await window.pywebview.api.abrir_juego();
-                log(res);
-            };
-        }
-        // otherwise, show download
-        else {
-            console.log("Mostrando: Descargar juego");
-            btn.textContent = "Descargar juego";
-            btn.onclick = descargar;
-        }
+        try {
+            let data = await window.pywebview.api.verificar_estado();
+            let state = JSON.parse(data);
+            const btnText = document.getElementById("btnText");
+            const btn = document.getElementById("actionButton");
+
+            if (state.needs_update) {
+                btnText.textContent = "Actualizar";
+                btn.onclick = descargar;
+            } else if (state.installed) {
+                btnText.textContent = "Comenzar juego";
+                btn.onclick = async () => {
+                    log("Abriendo...");
+                    await window.pywebview.api.abrir_juego();
+                };
+            }
+        } catch(e) { console.error(e); }
     }
 
-    window.addEventListener('pywebviewready', async () => {
-        console.log('pywebviewready: ejecutando setPlayMode');
-        await setPlayMode();
-    });
+    // Funciones de ventana
+    function minimizar() { window.pywebview.api.minimizar(); }
+    function cerrar() { window.pywebview.api.cerrar(); }
+
+    window.addEventListener('pywebviewready', setPlayMode);
 </script>
 
 </body>

@@ -1,11 +1,11 @@
 {
-  "core_version": "1.0.0e",
+  "core_version": "1.0.0f",
   "core_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/core.py",
 
-  "html_version": "1.0.0e",
+  "html_version": "1.0.0f",
   "html_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/index.html",
 
-  "assets_version": "1.0.0e",
+  "assets_version": "1.0.0f",
   "assets_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/assets/assets.zip",
 
   "game_version": "0.5.0b",
