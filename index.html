@@ -148,7 +148,7 @@
 <div class="overlay"></div>
 <div class="titlebar">
     <div class="window-controls">
-        <span class="title">PF Launcher 1.0.0d</span>
+        <span class="title">PF Launcher 1.0.0e</span>
         <button onclick="minimizar()">_</button>
         <button onclick="cerrar()">×</button>
     </div>
@@ -267,8 +267,8 @@
         }
     }
 
-    window.addEventListener('DOMContentLoaded', async () => {
-        console.log('DOMContentLoaded: ejecutando setPlayMode');
+    window.addEventListener('pywebviewready', async () => {
+        console.log('pywebviewready: ejecutando setPlayMode');
         await setPlayMode();
     });
 </script>
