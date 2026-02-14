@@ -210,12 +210,26 @@ def start():
     html_path = LAUNCHER_DATA / "index.html"
     print("HTML PATH:", html_path)
 
+    # Calcular posición central de la pantalla
+    import tkinter as tk
+    root = tk.Tk()
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    root.destroy()
+    
+    window_width = 1200
+    window_height = 700
+    x = (screen_width - window_width) // 2
+    y = (screen_height - window_height) // 2
+
     api = LauncherAPI()
     window = webview.create_window(
         "PF Launcher",
         str(html_path),
-        width=1200,
-        height=700,
+        width=window_width,
+        height=window_height,
+        x=x,
+        y=y,
         resizable=False,
         frameless=True,
         background_color='#000000',
