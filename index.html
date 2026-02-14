@@ -148,6 +148,7 @@
 <div class="overlay"></div>
 <div class="titlebar">
     <div class="window-controls">
+        <span class="title"> </span>
         <button onclick="minimizar()">_</button>
         <button onclick="cerrar()">×</button>
     </div>
@@ -226,9 +227,11 @@
     async function verificarEstado() {
         try {
             let data = await window.pywebview.api.verificar_estado();
-            return JSON.parse(data);
+            let state = JSON.parse(data);
+            console.log("Estado verificado:", state);
+            return state;
         } catch (e) {
-            console.error(e);
+            console.error("Error al verificar estado:", e);
             return {};
         }
     }
@@ -237,13 +240,18 @@
         let state = await verificarEstado();
         const btn = document.getElementById("actionButton");
         
+        console.log("setPlayMode - estado:", state);
+        console.log("installed:", state.installed, "version:", state.version, "needs_update:", state.needs_update);
+        
         // if there's an update available, show download
         if (state.needs_update) {
+            console.log("Mostrando: Actualizar juego");
             btn.textContent = "Actualizar juego";
             btn.onclick = descargar;
         }
         // if game is installed and no update needed, show play
         else if (state.installed && state.version) {
+            console.log("Mostrando: Jugar");
             btn.textContent = "Jugar";
             btn.onclick = async () => {
                 log("Abriendo juego...");
@@ -253,6 +261,7 @@
         }
         // otherwise, show download
         else {
+            console.log("Mostrando: Descargar juego");
             btn.textContent = "Descargar juego";
             btn.onclick = descargar;
         }

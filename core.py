@@ -78,29 +78,41 @@ class LauncherAPI:
         installed = False
         exe_path = None
         
-        # look for an .exe in game_data
-        for p in GAME_DATA.glob("*.exe"):
+        local_version = local.get("game_version")
+        
+        # if there's a saved game version, consider it installed
+        if local_version:
             installed = True
-            exe_path = str(p)
-            break
+        
+        # look for an .exe in game_data (including subdirectories)
+        if GAME_DATA.exists():
+            for p in GAME_DATA.glob("**/*.exe"):
+                exe_path = str(p)
+                installed = True
+                break
         
         # check remote version
         try:
             remote = requests.get(REMOTE_VERSION_URL).json()
             remote_version = remote.get("game_version")
-        except Exception:
+        except Exception as e:
             remote_version = None
+            print(f"Error fetching remote version: {e}")
         
-        local_version = local.get("game_version")
         needs_update = remote_version and local_version and remote_version != local_version
         
-        return json.dumps({
+        result = {
             "installed": installed,
             "version": local_version,
             "remote_version": remote_version,
             "needs_update": needs_update,
             "exe": exe_path,
-        })
+        }
+        
+        # log for debugging
+        print(f"verificar_estado: {result}")
+        
+        return json.dumps(result)
 
     def abrir_juego(self):
         """Lanza el ejecutable del juego si existe."""
