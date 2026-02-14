@@ -202,38 +202,6 @@ class LauncherAPI:
             return f"Juego actualizado a {version}"
         else:
             return "No hay actualizaciones"
-            except Exception as e:
-                return f"Error al descargar ZIP: {e}"
-
-            # actualizar y extraer
-            for item in GAME_DATA.iterdir():
-                if item == zip_path:
-                    continue
-                if item.is_dir():
-                    shutil.rmtree(item)
-                else:
-                    try:
-                        item.unlink()
-                    except Exception:
-                        pass
-
-            try:
-                with zipfile.ZipFile(zip_path, 'r') as z:
-                    z.extractall(GAME_DATA)
-            except zipfile.BadZipFile:
-                return "Error: archivo zip corrupto"
-            finally:
-                if zip_path.exists():
-                    zip_path.unlink()
-
-            local["game_version"] = version
-            save_local_version(local)
-            # notify UI to enable play
-            self._log(f"Juego actualizado a {version}")
-            self._window.evaluate_js("setPlayMode();")
-            return f"Juego actualizado a {version}"
-        else:
-            return "No hay actualizaciones"
 
 
 def start():
