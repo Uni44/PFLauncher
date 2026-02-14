@@ -9,6 +9,7 @@ import webview
 from importlib.machinery import SourceFileLoader
 import zipfile
 import shutil
+import tkinter as tk
 
 BASE_DIR = Path("launcher_data")
 BASE_DIR.mkdir(exist_ok=True)
