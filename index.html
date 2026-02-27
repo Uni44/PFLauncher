@@ -88,6 +88,17 @@
             border-bottom: 1px solid rgb(255, 255, 255);
 			color: white;
         }
+		
+		#news-list a {
+			text-decoration: none;
+			color: inherit;
+			display: block;
+		}
+		
+		#news-list a:hover .news-item {
+			background: rgba(255, 255, 255, 0.1);
+			border-bottom: 1px solid var(--zzz-yellow);
+		}
 
         /* Sección Derecha Inferior: Botón de Inicio */
         .bottom-right {
@@ -192,12 +203,15 @@
     <div class="left-content">
         <div class="news-panel">
             <div class="news-tabs">
-                <span class="active">Anuncios</span>
-                <span>Noticias</span>
+                <span class="active" data-i18n="news_title">Anuncios</span>
             </div>
             <div id="news-list">
-                <div class="news-item"><span>Actualización de versión 2.6...</span> <span>02/04</span></div>
-                <div class="news-item"><span>Evento «Armonía de delusiones»</span> <span>02/04</span></div>
+			<a href="assets/test.html">
+                <div class="news-item"><span>Actualización de versión 0.10.0</span> <span>26/02</span></div>
+			</a>
+			<a href="assets/test.html">
+                <div class="news-item"><span>Evento «Armonía de delusiones»</span> <span>20/02</span></div>
+			</a>
             </div>
         </div>
     </div>
@@ -207,7 +221,7 @@
     <div class="bottom-right">
         <button id="actionButton" onclick="descargar()">
             <div class="btn-play-icon">▶</div>
-            <span id="btnText">Comenzar juego</span>
+            <span id="btnText">...</span>
         </button>
     </div>
 
@@ -217,7 +231,47 @@
 </div>
 
 <script>
-    // Mantengo tu lógica funcional original pero adaptada a los nuevos IDs
+	const i18n = {
+		es: {
+			btn_play: "Comenzar juego",
+			btn_download: "Descargar juego",
+			btn_downloading: "descargando xd",
+			news_title: "Anuncios",
+			status_ready: "Sistema listo...",
+			status_error: "Error de conexión"
+		},
+		en: {
+			btn_play: "Start Game",
+			btn_download: "Download Game",
+			btn_downloading: "descargando xd",
+			news_title: "Announcements",
+			status_ready: "System ready...",
+			status_error: "Connection error"
+		}
+	};
+	
+	function getLanguage() {
+		// Obtiene las dos primeras letras (ej: "es-AR" -> "es")
+		const lang = navigator.language.split('-')[0];
+		// Si el idioma no está en nuestro diccionario, usamos inglés por defecto
+		return i18n[lang] ? lang : 'en';
+	}
+
+	const currentLang = getLanguage();
+	const langData = i18n[currentLang];
+	
+	function applyTranslations() {
+		document.querySelectorAll('[data-i18n]').forEach(element => {
+			const key = element.getAttribute('data-i18n');
+			if (langData[key]) {
+				element.innerText = langData[key];
+			}
+		});
+	}
+
+	// Ejecutar al cargar la página
+	document.addEventListener('DOMContentLoaded', applyTranslations);
+
     let isDownloading = false;
 
     function log(msg) {
@@ -236,7 +290,7 @@
         const btnText = document.getElementById("btnText");
         
         btn.style.opacity = "0.7";
-        btnText.textContent = "Descargando...";
+        btnText.textContent = langData.btn_downloading;
         log("Iniciando descarga...");
 
         try {
@@ -259,7 +313,7 @@
             const btn = document.getElementById("actionButton");
 
             if (state.needs_update) {
-                btnText.textContent = "Actualizar";
+                btnText.textContent = langData.btn_update;
                 btn.onclick = descargar;
             } else if (state.installed) {
                 btnText.textContent = "Comenzar juego";
@@ -267,6 +321,14 @@
                     log("Abriendo...");
                     await window.pywebview.api.abrir_juego();
                 };
+				setProgress(100);
+            } else if (!state.installed) {
+                btnText.textContent = "descargar juego xd";
+                btn.onclick = async () => {
+                    log("juego no instalado...");
+                };
+				btn.onclick = descargar;
+				setProgress(0);
             }
         } catch(e) { console.error(e); }
     }

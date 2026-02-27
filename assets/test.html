@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Noticia - PF Launcher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background-color: #1a1a1a; /* Fondo oscuro igual al launcher */
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        h1 {
+            font-family: 'Exo 2', sans-serif;
+            color: #ffda00; /* El amarillo característico */
+            text-transform: uppercase;
+            border-left: 5px solid #ffda00;
+            padding-left: 15px;
+        }
+
+        .content {
+            margin-top: 20px;
+            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .btn-back {
+            margin-top: 30px;
+            padding: 10px 25px;
+            background-color: transparent;
+            color: #ffda00;
+            border: 2px solid #ffda00;
+            border-radius: 50px;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            background-color: #ffda00;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Título de la Noticia</h1>
+
+    <div class="content">
+        <p>Esta es una noticia de prueba cargada desde el archivo local.</p>
+        <p>Aquí puedes verificar si los enlaces están funcionando correctamente dentro de tu aplicación de <strong>pywebview</strong>.</p>
+        <ul>
+            <li>Fecha de publicación: 26/02/2026</li>
+            <li>Categoría: Actualizaciones</li>
+        </ul>
+    </div>
+
+    <a href="../index.html" class="btn-back">← VOLVER AL LAUNCHER</a>
+
+</body>
+</html>
