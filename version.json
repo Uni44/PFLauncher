@@ -1,13 +1,13 @@
 {
-  "core_version": "1.1.0",
+  "core_version": "1.2.0",
   "core_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/core.py",
 
-  "html_version": "1.1.1",
+  "html_version": "1.2.0",
   "html_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/index.html",
 
-  "assets_version": "1.1.0",
+  "assets_version": "1.2.0",
   "assets_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/assets/assets.zip",
 
-  "game_version": "0.10.0",
-  "game_url": "https://www.dropbox.com/scl/fi/9hlw72k52uv2qtcqzpb3b/PF-Cliente-0.10.0.zip?rlkey=nu16eqxb1dlj946ni826ys873&st=hhzbk4zj&dl=1"
+  "game_version": "0.11.0",
+  "game_url": "https://www.dropbox.com/scl/fi/e7xlknyl09gmgwqqlhgnq/PF-Cliente-0.11.0.rar?rlkey=lav4ndjc9rppkv4lb485e4xfv&st=pbyit7wq&dl=1"
 }
