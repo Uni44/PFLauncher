@@ -151,7 +151,7 @@ class LauncherAPI:
 
         if remote.get("game_version") and local.get("game_version") != remote.get("game_version"):
             version = remote.get("game_version")
-            self._log("new_version", version=version)
+            self._log("status_updating", version=version)
 
             zip_path = GAME_DATA / "game.zip"
 
@@ -205,7 +205,7 @@ class LauncherAPI:
             local["game_version"] = version
             save_local_version(local)
             # notify UI to enable play
-            self._log("updated", version=version)
+            self._log("status_updated", version=version)
             self._window.evaluate_js("setPlayMode();")
             return f"Juego actualizado a {version}"
         else:
