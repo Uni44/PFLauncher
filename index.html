@@ -289,6 +289,16 @@ body, html {
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
 }
+
+@keyframes pulseDisabled {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.4; }
+    100% { opacity: 0.6; }
+}
+
+#actionButton:disabled {
+    animation: pulseDisabled 2s infinite ease-in-out;
+}
     </style>
 </head>
 <body>
@@ -350,7 +360,7 @@ body, html {
             status_ready: "Sistema listo",
             status_error: "Error de conexión",
             status_updating: "Nueva versión detectada: {version}",
-            status_downloading: "Descargando archivos del juego",
+            status_downloading: "Descargando: {current} MB / {total} MB",
             status_updated: "¡Listo! Versión {version} instalada",
             error_internet: "Sin conexión. Usando versión local",
             status_extracting: "Extrayendo archivos",
@@ -366,7 +376,7 @@ body, html {
             status_ready: "System ready",
             status_error: "Connection error",
             status_updating: "New version detected: {version}",
-            status_downloading: "Downloading game files",
+            status_downloading: "Downloading: {current} MB / {total} MB",
             status_updated: "Done! Version {version} installed.",
             error_internet: "No connection. Using local version.",
             status_extracting: "Extracting files",
@@ -393,25 +403,34 @@ body, html {
 
     // --- NUEVA FUNCIÓN PARA LOGS DESDE PYTHON ---
     function updateUIStatus(data) {
-        const logElement = document.getElementById("log");
-        
-        // 1. Buscar la traducción usando la key que manda Python
-        let message = langData[data.key] || data.key;
+		const logElement = document.getElementById("log");
+		const lang = getLanguage();
+		
+		let message = i18n[lang][data.key] || data.key;
 
-        // 2. Reemplazar variables como {version} o {downloaded}
-        if (data.vars) {
-            for (const [key, value] of Object.entries(data.vars)) {
-                message = message.replace(`{${key}}`, value);
-            }
-        }
+		if (data.vars) {
+			for (const [key, value] of Object.entries(data.vars)) {
+				message = message.replace(`{${key}}`, value);
+			}
+		}
 
-        logElement.innerText = message;
-    }
+		// --- EFECTO DE ANIMACIÓN ---
+		// Quitamos la clase (si existía) y la volvemos a poner para reiniciar la animación
+		logElement.classList.remove('text-animate');
+		
+		// Forzamos un reflow (truco para que el navegador note el reinicio)
+		void logElement.offsetWidth; 
+		
+		logElement.innerText = message;
+		logElement.classList.add('text-animate');
+	}
 
     function setProgress(value) {
         const prog = document.getElementById("progress");
         if (prog) prog.style.width = value + "%";
     }
+	
+	let isDownloading = false;
 
     async function descargar() {
         if (isDownloading) return;
@@ -422,6 +441,7 @@ body, html {
         
         btn.style.opacity = "0.7";
         btnText.textContent = langData.btn_downloading;
+		btn.disabled = true;
         
         // Usamos la función interna para mostrar el inicio
         updateUIStatus({key: 'status_downloading'});
@@ -436,6 +456,7 @@ body, html {
         } finally {
             isDownloading = false;
             btn.style.opacity = "1";
+			btn.disabled = false;
         }
     }
 
@@ -483,6 +504,5 @@ body, html {
     function minimizar() { window.pywebview.api.minimizar(); }
     function cerrar() { window.pywebview.api.cerrar(); }
 </script>
-
 </body>
 </html>
