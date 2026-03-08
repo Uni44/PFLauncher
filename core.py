@@ -47,11 +47,15 @@ class LauncherAPI:
         print("LauncherAPI inicializada")
         self._window = window
 
-    def _log(self, msg, progress=None):
-        """helper to send messages back to HTML logger"""
+    def _log(self, key, progress=None, **kwargs):
+        """
+        Enviamos una 'key' en lugar de texto plano. 
+        kwargs permite pasar variables (como la versión) si fuera necesario.
+        """
         if self._window:
-            escaped = json.dumps(msg)
-            self._window.evaluate_js(f"log({escaped});")
+            # Pasamos la key y cualquier dato extra como JSON
+            data = json.dumps({"key": key, "vars": kwargs})
+            self._window.evaluate_js(f"updateUIStatus({data});")
             if progress is not None:
                 self._window.evaluate_js(f"setProgress({progress});")
         else:
@@ -138,7 +142,7 @@ class LauncherAPI:
             local = load_local_version()
             # Si no hay internet pero el juego está instalado, permitir continuar
             if local.get("game_version"):
-                self._log("Sin conexión a internet, usando versión local")
+                self._log("error_internet")
                 return "Sin conexión, usando versión local"
             # Si no hay internet y el juego no está instalado, error
             return f"Error de conexión: sin internet. {e}"
@@ -147,7 +151,7 @@ class LauncherAPI:
 
         if remote.get("game_version") and local.get("game_version") != remote.get("game_version"):
             version = remote.get("game_version")
-            self._log(f"Nueva versión del juego detectada: {version}")
+            self._log("new_version", version=version)
 
             zip_path = GAME_DATA / "game.zip"
 
@@ -166,10 +170,14 @@ class LauncherAPI:
                         f.write(chunk)
                         downloaded += len(chunk)
                         if total:
+                            # Calculamos Megas (Bytes / 1024 / 1024)
+                            mb_descargados = round(downloaded / (1024 * 1024), 2)
+                            mb_totales = round(total / (1024 * 1024), 2)
                             pct = int(downloaded / total * 100)
+                            pct = int(downloaded / total * 100)
+                            self._log("status_downloading", progress=pct, current=mb_descargados, total=mb_totales)
                         else:
                             pct = None
-                        self._log(f"Descargados {downloaded} bytes", pct)
             except Exception as e:
                 return f"Error al descargar ZIP: {e}"
 
@@ -197,7 +205,7 @@ class LauncherAPI:
             local["game_version"] = version
             save_local_version(local)
             # notify UI to enable play
-            self._log(f"Juego actualizado a {version}")
+            self._log("updated", version=version)
             self._window.evaluate_js("setPlayMode();")
             return f"Juego actualizado a {version}"
         else:
