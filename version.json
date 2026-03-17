@@ -1,13 +1,13 @@
 {
-  "core_version": "1.3.2",
+  "core_version": "1.3.3",
   "core_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/core.py",
 
-  "html_version": "1.3.2",
+  "html_version": "1.3.3",
   "html_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/index.html",
 
-  "assets_version": "1.3.2",
+  "assets_version": "1.3.3",
   "assets_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/assets/assets.zip",
 
-  "game_version": "0.14.0-dev-20260312-1845",
-  "game_url": "https://www.dropbox.com/scl/fi/u3k6rzimycrdloso0phrh/ProyectoFurry-0.14.0-dev-20260312-1845.zip?rlkey=4dn3y4vvxummyycwrdf1mku9u&st=1fz1ydj2&dl=1"
+  "game_version": "0.14.1-dev-20260316-2033",
+  "game_url": "https://www.dropbox.com/scl/fi/u31yu1iltymmcz7bzrk8a/ProyectoFurry-0.14.1-dev-20260316-2033.zip?rlkey=eh312ov04qkbuqqp32l94cpji&st=9wk1r2xy&dl=1"
 }

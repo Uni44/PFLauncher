@@ -182,9 +182,15 @@ class LauncherAPI:
                 return f"Error al descargar ZIP: {e}"
 
             # actualizar y extraer
+            PROTECTED_FOLDERS = ["world"]
+
             for item in GAME_DATA.iterdir():
                 if item == zip_path:
                     continue
+            
+                if item.is_dir() and item.name in PROTECTED_FOLDERS:
+                    continue
+            
                 if item.is_dir():
                     shutil.rmtree(item)
                 else:
