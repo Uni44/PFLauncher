@@ -182,22 +182,20 @@ class LauncherAPI:
                 return f"Error al descargar ZIP: {e}"
 
             # actualizar y extraer
-            PROTECTED_FOLDERS = ["world"]
-
+            def should_skip(path):
+                return "world" in path.parts or "worlds" in path.parts
+            
             for item in GAME_DATA.iterdir():
                 if item == zip_path:
                     continue
             
-                if item.is_dir() and item.name in PROTECTED_FOLDERS:
+                if should_skip(item):
                     continue
             
                 if item.is_dir():
                     shutil.rmtree(item)
                 else:
-                    try:
-                        item.unlink()
-                    except Exception:
-                        pass
+                    item.unlink(missing_ok=True)
 
             try:
                 with zipfile.ZipFile(zip_path, 'r') as z:
