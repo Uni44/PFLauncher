@@ -22,13 +22,11 @@ def sha256_file(path):
             h.update(chunk)
     return h.hexdigest()
 
-
 def download_file(url, dest):
     r = requests.get(url)
     r.raise_for_status()
     with open(dest, "wb") as f:
         f.write(r.content)
-
 
 def load_local_version():
     if VERSION_FILE.exists():
@@ -36,11 +34,9 @@ def load_local_version():
             return json.load(f)
     return {}
 
-
 def save_local_version(data):
     with open(VERSION_FILE, "w") as f:
         json.dump(data, f, indent=4)
-
 
 class LauncherAPI:
     def __init__(self, window=None):
@@ -181,21 +177,40 @@ class LauncherAPI:
             except Exception as e:
                 return f"Error al descargar ZIP: {e}"
 
-            # actualizar y extraer
-            def should_skip(path):
-                return "world" in path.parts or "worlds" in path.parts
+            PROTECTED_NAMES = {
+                "world",
+                "worlds",
+                "save",
+                "saves",
+                "playerdata",
+                "userdata"
+            }
+
+            def is_protected(path):
+                return any(part.lower() in PROTECTED_NAMES for part in path.parts)
+
+            def safe_delete(path):
+                if is_protected(path):
+                    return
+            
+                if path.is_file():
+                    path.unlink(missing_ok=True)
+                    return
+            
+                if path.is_dir():
+                    for sub in path.iterdir():
+                        safe_delete(sub)
+            
+                    # intentar borrar la carpeta si quedó vacía
+                    try:
+                        path.rmdir()
+                    except Exception:
+                        pass
             
             for item in GAME_DATA.iterdir():
                 if item == zip_path:
                     continue
-            
-                if should_skip(item):
-                    continue
-            
-                if item.is_dir():
-                    shutil.rmtree(item)
-                else:
-                    item.unlink(missing_ok=True)
+                safe_delete(item)
 
             try:
                 with zipfile.ZipFile(zip_path, 'r') as z:
@@ -215,6 +230,30 @@ class LauncherAPI:
         else:
             return "No hay actualizaciones"
 
+def empaquetarDev(self):
+    try:
+        source_dir = GAME_DATA / "ProyectoFurry_Data" / "world" / "dev"
+        
+        if not source_dir.exists():
+            return "No existe world dev"
+
+        zip_path = BASE_DIR / "dev.zip"
+
+        # borrar zip anterior si existe
+        if zip_path.exists():
+            zip_path.unlink()
+
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as z:
+            for file in source_dir.rglob("*"):
+                if file.is_file():
+                    # ruta relativa dentro del zip
+                    arcname = file.relative_to(source_dir.parent)
+                    z.write(file, arcname)
+
+        return f"ZIP creado en {zip_path}"
+
+    except Exception as e:
+        return f"Error: {e}"
 
 def start():
     print("Core iniciado.")

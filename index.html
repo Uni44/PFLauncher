@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PF Launcher</title>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+
+
+
+
     <style>
 :root {
     --zzz-yellow: #ffda00;
@@ -151,12 +156,14 @@ body, html {
     bottom: 50px;
     right: 60px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* El log arriba, los botones abajo */
     align-items: flex-end;
     gap: 15px;
+    z-index: 10;
 }
 
 #actionButton {
+    height: 72px;
     background: var(--zzz-yellow);
     color: black;
     border: none;
@@ -164,11 +171,12 @@ body, html {
     font-family: 'Exo 2', sans-serif;
     font-weight: 900;
     font-size: 26px;
-    border-radius: 4px; /* Un poco más cuadrado para verse "tech" */
+    border-radius: 4px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch;
+    gap: 10px;
     box-shadow: 0 0 30px rgba(255, 218, 0, 0.2);
     transition: var(--transition);
     text-transform: uppercase;
@@ -230,13 +238,13 @@ body, html {
 .side-socials span { 
     font-size: 20px; 
     cursor: pointer; 
-    opacity: 0.6; 
+    opacity: 1; 
     transition: var(--transition); 
     color: white;
 }
 .side-socials span:hover { 
     opacity: 1; 
-    transform: scale(1.2); 
+    transform: scale(1.4);
     color: var(--zzz-yellow);
 }
 
@@ -299,7 +307,120 @@ body, html {
 #actionButton:disabled {
     animation: pulseDisabled 2s infinite ease-in-out;
 }
+
+/* Contenedor que agrupa ambos botones */
+.action-row {
+    display: flex;
+    align-items: flex-end; /* Alineados por la base */
+    gap: 8px; /* Espacio pequeño entre ellos */
+}
+
+/* El botón de opciones ahora tiene la misma altura que el de Play */
+#optionsButton {
+    background: var(--zzz-bg-glass);
+    border: 1px solid var(--zzz-border);
+    color: white;
+    height: 70px;
+    width: 70px;
+    border-radius: 4px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    padding: 0;
+}
+
+#optionsButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--zzz-yellow);
+    color: var(--zzz-yellow);
+    transform: translateY(-2px); /* Pequeño salto al pasar el mouse */
+}
+
+/* El contenedor del menú */
+.dropdown-menu {
+    position: absolute;
+    bottom: 85px; 
+    right: 0;
+    background: rgba(10, 10, 10, 0.9); /* Más oscuro y sólido */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 5px solid var(--zzz-yellow); /* Borde lateral grueso amarillo */
+    width: 260px;
+    display: none; 
+    flex-direction: column;
+    padding: 10px 0;
+    backdrop-filter: blur(25px); /* Desenfoque fuerte del fondo */
+    box-shadow: 0 15px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.02);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 100%, 0 85%); /* Esquina inferior recortada estilo tech */
+    z-index: 9999;
+}
+
+.dropdown-menu.show {
+    display: flex !important;
+    animation: menuReveal 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+/* Las opciones (Clickenables y bonitas) */
+.menu-item {
+    padding: 14px 25px;
+    color: #bbb;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+/* Efecto Hover (El momento en que se vuelve premium) */
+.menu-item:hover {
+    background: rgba(255, 218, 0, 0.1);
+    color: var(--zzz-yellow);
+    padding-left: 35px; /* Desplazamiento suave */
+}
+
+/* El indicador amarillo que aparece al hacer hover */
+.menu-item:hover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 4px;
+    height: 60%;
+    background: var(--zzz-yellow);
+    box-shadow: 0 0 10px var(--zzz-yellow);
+}
+
+.menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 8px 20px;
+}
+
+/* Animación de apertura */
+@keyframes menuReveal {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px) scale(0.95); 
+        filter: blur(10px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+        filter: blur(0);
+    }
+}
     </style>
+
+
+
 </head>
 <body>
 <video autoplay muted loop id="bg-video">
@@ -334,13 +455,36 @@ body, html {
         </div>
     </div>
 
-    <div class="minimal-log" id="log">Sistema listo.</div>
+    <div class="minimal-log" id="log">Sistema listo</div>
 
     <div class="bottom-right">
+        <div class="action-row">
         <button id="actionButton" onclick="descargar()">
             <div class="btn-play-icon">▶</div>
             <span id="btnText">...</span>
         </button>
+
+        <div class="options-container">
+            <button id="optionsButton" onclick="toggleMenu()">
+                <span>⚙️</span>
+            </button>
+            <div id="optionsMenu" class="dropdown-menu">
+                <div class="menu-item" onclick="repararArchivos()">
+                    <span style="font-size: 16px;">🛠️</span> 
+                    <span data-i18n="menu_repair">...</span>
+                </div>
+                <div class="menu-item" onclick="buscarUpdate()">
+                    <span style="font-size: 16px;">🔄</span> 
+                    <span data-i18n="menu_update">...</span>
+                </div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" onclick="EmpaquetarDev()">
+                    <span style="font-size: 16px;">📦</span> 
+                    <span data-i18n="menu_dev">...</span>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <div class="progress-container">
@@ -348,15 +492,20 @@ body, html {
     </div>
 </div>
 
+
+
+
+
+
 <script>
     const i18n = {
         es: {
+            text: "{text}",
             btn_play: "Comenzar juego",
             btn_download: "Descargar juego",
             btn_downloading: "Descargando",
             btn_update: "Actualizar",
             news_title: "Anuncios",
-            // Llaves para estados dinámicos (desde Python)
             status_ready: "Sistema listo",
             status_error: "Error de conexión",
             status_updating: "Nueva versión detectada {version}",
@@ -364,15 +513,18 @@ body, html {
             status_updated: "¡Listo! Versión {version} instalada",
             error_internet: "Sin conexión. Usando versión local",
             status_extracting: "Extrayendo archivos",
-            status_opening: "Abriendo el juego"
+            status_opening: "Abriendo el juego",
+            menu_repair: "Reparar archivos",
+            menu_update: "Buscar actualizaciones",
+            menu_dev: "Empaquetar Dev"
         },
         en: {
+            text: "{text}",
             btn_play: "Start Game",
             btn_download: "Download Game",
             btn_downloading: "Downloading",
             btn_update: "Update",
             news_title: "Announcements",
-            // Llaves para estados dinámicos (desde Python)
             status_ready: "System ready",
             status_error: "Connection error",
             status_updating: "New version detected {version}",
@@ -380,7 +532,10 @@ body, html {
             status_updated: "Done! Version {version} installed",
             error_internet: "No connection. Using local version",
             status_extracting: "Extracting files",
-            status_opening: "Opening game"
+            status_opening: "Opening game",
+            menu_repair: "menu_repair",
+            menu_update: "menu_update",
+            menu_dev: "menu_dev"
         }
     };
     
@@ -500,9 +655,49 @@ body, html {
         applyTranslations();
     });
 
+    function toggleMenu() {
+        const menu = document.getElementById("optionsMenu");
+        menu.classList.toggle("show");
+    }
+    
+    // Opcional: Cerrar el menú si haces clic fuera
+    window.addEventListener('click', function(e) {
+        const menu = document.getElementById("optionsMenu");
+        const btn = document.getElementById("optionsButton");
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.remove('show');
+        }
+    });
+
+    async function EmpaquetarDev() {
+        // Bloqueamos el botón de opciones para que no le den mil veces
+        const optBtn = document.getElementById("optionsButton");
+        optBtn.disabled = true;
+        
+        updateUIStatus({key: 'text', text = "Empaquetando Dev"});
+        console.log("Empaquetando Dev");
+    
+        try {
+            // Llamada a tu función en Python
+            await window.pywebview.api.empaquetarDev(); 
+        } catch (e) {
+            console.error("Error en EmpaquetarDev:", e);
+            updateUIStatus({key: 'status_error'});
+        } finally {
+            optBtn.disabled = false;
+            document.getElementById("optionsMenu").classList.remove("show");
+            updateUIStatus({key: 'text', text = "Listo Dev"});
+            console.log("Listo Dev");
+        }
+    }
+
     // Funciones de ventana
     function minimizar() { window.pywebview.api.minimizar(); }
     function cerrar() { window.pywebview.api.cerrar(); }
 </script>
+
+
+
+
 </body>
 </html>
