@@ -230,30 +230,32 @@ class LauncherAPI:
         else:
             return "No hay actualizaciones"
 
-def empaquetarDev(self):
-    try:
-        source_dir = GAME_DATA / "ProyectoFurry_Data" / "world" / "dev"
-        
-        if not source_dir.exists():
-            return "No existe world dev"
+    def empaquetarDev(self):
+        try:
+            source_dir = GAME_DATA / "ProyectoFurry_Data" / "world" / "dev"
+            
+            if not source_dir.exists():
+                print("No existe world dev")
+                return "No existe world dev"
 
-        zip_path = BASE_DIR / "dev.zip"
+            zip_path = BASE_DIR / "dev.zip"
 
-        # borrar zip anterior si existe
-        if zip_path.exists():
-            zip_path.unlink()
+            # borrar zip anterior si existe
+            if zip_path.exists():
+                zip_path.unlink()
 
-        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as z:
-            for file in source_dir.rglob("*"):
-                if file.is_file():
-                    # ruta relativa dentro del zip
-                    arcname = file.relative_to(source_dir.parent)
-                    z.write(file, arcname)
+            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as z:
+                for file in source_dir.rglob("*"):
+                    if file.is_file():
+                        # ruta relativa dentro del zip
+                        arcname = file.relative_to(source_dir.parent)
+                        z.write(file, arcname)
 
-        return f"ZIP creado en {zip_path}"
+            return f"ZIP creado en {zip_path}"
 
-    except Exception as e:
-        return f"Error: {e}"
+        except Exception as e:
+            print(f"Error: {e}")
+            return f"Error: {e}"
 
 def start():
     print("Core iniciado.")

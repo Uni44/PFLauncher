@@ -674,7 +674,7 @@ body, html {
         const optBtn = document.getElementById("optionsButton");
         optBtn.disabled = true;
         
-        updateUIStatus({key: 'text', text: 'Empaquetando Dev'});
+		updateUIStatus({key: 'text', vars: {text: 'Empaquetando Dev'}});
         console.log("Empaquetando Dev");
     
         try {
@@ -686,7 +686,7 @@ body, html {
         } finally {
             optBtn.disabled = false;
             document.getElementById("optionsMenu").classList.remove("show");
-            updateUIStatus({key: 'text', text: 'Listo Dev'});
+            updateUIStatus({key: 'text', vars: {text: 'Listo Dev'}});
             console.log("Listo Dev");
         }
     }
