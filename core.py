@@ -328,7 +328,7 @@ class LauncherAPI:
                     requests.post(
                         "https://discord.com/api/webhooks/1486253978474774690/n_xE7LwUPWWwWoTislqa5N8FQjftuXONks-l3TB2VSxuD7VgRcuWXD70he2Izhp_usZk",
                         data={"content": mensaje},
-                        files={"file": ("log.txt", f)}
+                        files={"file": ("log.txt", f, "text/plain; charset=utf-8")}
                     )
         except Exception as e:
             print(f"Error enviando crash: {e}")
