@@ -15,7 +15,7 @@ import threading
 #import pystray
 #from PIL import Image, ImageDraw
 
-LAUNCHER_VERSION = "2.0.0"
+LAUNCHER_VERSION = "2.1.0"
 BASE_DIR = Path("launcher_data")
 BASE_DIR.mkdir(exist_ok=True)
 BASE_DIR_ASSETS = Path("launcher_data/assets")

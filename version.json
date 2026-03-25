@@ -1,8 +1,8 @@
 {
-  "updater_url": "",
+  "updater_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/refs/heads/main/Distribution/Updater.exe",
   
   "launcher_version": "2.1.0",
-  "launcher_url": "",
+  "launcher_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/refs/heads/main/Distribution/Launcher.exe",
 
   "core_version": "1.5.0",
   "core_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/core.py",
