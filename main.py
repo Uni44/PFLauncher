@@ -15,7 +15,7 @@ import threading
 #import pystray
 #from PIL import Image, ImageDraw
 
-LAUNCHER_VERSION = "2.1.0"
+LAUNCHER_VERSION = "2.1.1"
 BASE_DIR = Path("launcher_data")
 BASE_DIR.mkdir(exist_ok=True)
 BASE_DIR_ASSETS = Path("launcher_data/assets")
@@ -59,6 +59,9 @@ def check_and_update():
     local = load_local_version()
 
     # --- LAUNCHER ---
+    if os.path.exists("updater.exe"):
+        os.remove("updater.exe")
+
     if LAUNCHER_VERSION != remote["launcher_version"]:
         print("Actualizando launcher...")
         if not os.path.exists("updater.exe"):
@@ -68,9 +71,6 @@ def check_and_update():
             remote["launcher_url"]
         ])
         sys.exit()
-    else:
-        if os.path.exists("updater.exe"):
-            os.remove("updater.exe")
 
     # --- CORE ---
     core_path = BASE_DIR / "core.data"
