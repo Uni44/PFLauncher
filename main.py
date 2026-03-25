@@ -10,13 +10,16 @@ from importlib.machinery import SourceFileLoader
 import zipfile
 import shutil
 import tkinter as tk
+import subprocess
+import threading
+#import pystray
+#from PIL import Image, ImageDraw
 
+LAUNCHER_VERSION = "2.0.0"
 BASE_DIR = Path("launcher_data")
 BASE_DIR.mkdir(exist_ok=True)
-
 BASE_DIR_ASSETS = Path("launcher_data/assets")
 BASE_DIR_ASSETS.mkdir(exist_ok=True)
-
 VERSION_FILE = Path("version_local.json")
 REMOTE_VERSION_URL = "https://raw.githubusercontent.com/Uni44/PFLauncher/main/version.json"
 
@@ -43,11 +46,31 @@ def save_local_version(data):
     with open(VERSION_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
+def download_updater(url):
+    print("Descargando updater...")
+    data = requests.get(url).content
+    with open("updater.exe", "wb") as f:
+        f.write(data)
+
 def check_and_update():
     print("Verificando versiones...")
 
     remote = requests.get(REMOTE_VERSION_URL).json()
     local = load_local_version()
+
+    # --- LAUNCHER ---
+    if LAUNCHER_VERSION != remote["launcher_version"]:
+        print("Actualizando launcher...")
+        if not os.path.exists("updater.exe"):
+            download_updater(remote["updater_url"])
+        subprocess.Popen([
+            "updater.exe",
+            remote["launcher_url"]
+        ])
+        sys.exit()
+    else:
+        if os.path.exists("updater.exe"):
+            os.remove("updater.exe")
 
     # --- CORE ---
     core_path = BASE_DIR / "core.data"

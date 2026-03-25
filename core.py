@@ -5,15 +5,46 @@ import json
 import hashlib
 import zipfile
 import shutil
+import subprocess
+import threading
+#import pystray
+#from PIL import Image, ImageDraw
 
 REMOTE_VERSION_URL = "https://raw.githubusercontent.com/Uni44/PFLauncher/main/version.json"
 BASE_DIR = Path.cwd()
 LAUNCHER_DATA = BASE_DIR / "launcher_data"
 GAME_DATA = BASE_DIR / "game_data"
 VERSION_FILE = BASE_DIR / "version_local.json"
-
 LAUNCHER_DATA.mkdir(exist_ok=True)
 GAME_DATA.mkdir(exist_ok=True)
+
+#def create_image():
+#    img = Image.new('RGB', (64, 64), color=(0, 0, 0))
+#    d = ImageDraw.Draw(img)
+#    d.rectangle((16, 16, 48, 48), fill=(255, 255, 255))
+#    return img
+
+#def setup_tray(api):
+#    def show_window(icon, item):
+#        if api._window:
+#            try:
+#                api._window.restore()
+#            except Exception:
+#                pass
+#    def exit_app(icon, item):
+#        icon.stop()
+#        if api._window:
+#            api._window.destroy()
+#    icon = pystray.Icon(
+#        "pf_launcher",
+#        create_image(),
+#        "PF Launcher",
+#        menu=pystray.Menu(
+#            pystray.MenuItem("Abrir", show_window),
+#            pystray.MenuItem("Salir", exit_app)
+#        )
+#    )
+#    icon.run()
 
 def sha256_file(path):
     h = hashlib.sha256()
@@ -116,19 +147,50 @@ class LauncherAPI:
         return json.dumps(result)
 
     def abrir_juego(self):
-        """Lanza el ejecutable del juego si existe."""
         for p in GAME_DATA.glob("*.exe"):
             try:
-                # Windows: use startfile
-                import os
-                os.startfile(str(p))
-                # Cerrar launcher después de abrir el juego
-                if self._window:
-                    self._window.destroy()
+                proc = subprocess.Popen([str(p)])
+                def monitor():
+                    proc.wait()
+                    exit_code = proc.returncode
+                    if exit_code != 0:
+                        self._log("game_crashed", code=exit_code)
+                        self._window.restore()
+                    else:
+                        self._log("game_closed")
+                        cerrar = self.analizar_log()
+                        if cerrar:
+                            self.cerrar()
+                        else:
+                            self._window.restore()
+                threading.Thread(target=monitor, daemon=True).start()
+                self._window.minimize()
                 return "lanzado"
             except Exception as e:
                 return f"error al abrir: {e}"
         return "no encontrado"
+        
+    def analizar_log(self):
+        log_path = GAME_DATA / "log.txt"
+        if not log_path.exists():
+            return True
+        try:
+            with open(log_path, "r", encoding="utf-8", errors="ignore") as f:
+                lineas = f.readlines()
+            errores = ["error", "exception", "fatal", "crash", "failed"]
+            for i, linea in enumerate(reversed(lineas)):
+                linea_low = linea.lower()
+                if any(e in linea_low for e in errores):
+                    idx_real = len(lineas) - 1 - i
+                    inicio = max(0, idx_real - 2)
+                    fin = min(len(lineas), idx_real + 5)
+                    contexto = "".join(lineas[inicio:fin])
+                    self._log("game_error", detail=contexto)
+                    return False
+            return True
+        except Exception as ex:
+            print(f"Error leyendo log: {ex}")
+            return True
 
     def descargar_juego(self):
         """Verifica la versión remota y descarga/extrae el ZIP si hay actualización."""
@@ -257,6 +319,20 @@ class LauncherAPI:
             print(f"Error: {e}")
             return f"Error: {e}"
 
+    def enviar_reporte_crash(self, crashOrError):
+        log_path = GAME_DATA / "log.txt"
+        try:
+            mensaje = f"{crashOrError}"
+            if log_path.exists():
+                with open(log_path, "rb") as f:
+                    requests.post(
+                        "https://discord.com/api/webhooks/1486253978474774690/n_xE7LwUPWWwWoTislqa5N8FQjftuXONks-l3TB2VSxuD7VgRcuWXD70he2Izhp_usZk",
+                        data={"content": mensaje},
+                        files={"file": ("log.txt", f)}
+                    )
+        except Exception as e:
+            print(f"Error enviando crash: {e}")
+
 def start():
     print("Core iniciado.")
 
@@ -290,6 +366,8 @@ def start():
     )
     # give api a reference to the window so it can send logs/progress callbacks
     api._window = window
+    # iniciar tray en hilo separado
+    #threading.Thread(target=setup_tray, args=(api,), daemon=True).start()
     webview.start()
 
 if __name__ == "__main__":

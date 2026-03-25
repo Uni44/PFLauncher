@@ -10,7 +10,7 @@
 
 
 
-    <style>
+<style>
 :root {
     --zzz-yellow: #ffda00;
     --zzz-pink: #ff69b4;
@@ -417,7 +417,93 @@ body, html {
         filter: blur(0);
     }
 }
-    </style>
+
+/* --- VENTANA DE CRASH --- */
+.crash-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.crash-box {
+    width: 550px;
+    background: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid #ff4444; /* Rojo de error */
+    box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
+}
+
+.crash-header {
+    padding: 12px 20px;
+    background: rgba(255, 68, 68, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.crash-header span {
+    color: #ff4444;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.crash-header button {
+    background: none; border: none; color: white; opacity: 0.5; cursor: pointer;
+}
+
+.crash-content { padding: 30px; }
+
+.crash-main-text { color: white; font-weight: bold; font-size: 16px; margin-bottom: 10px; }
+.crash-sub-text { color: #888; font-size: 13px; line-height: 1.4; margin-bottom: 20px; }
+
+.log-preview {
+    background: #000;
+    border: 1px solid #222;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #555;
+    max-height: 100px;
+    overflow-y: auto;
+    margin-bottom: 25px;
+}
+
+.crash-footer { display: flex; gap: 15px; }
+
+.btn-send {
+    background: var(--zzz-yellow);
+    color: black;
+    border: none;
+    padding: 12px 25px;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    cursor: pointer;
+    flex-grow: 1;
+}
+
+.btn-ignore {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 12px 25px;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-send:hover { background: white; transform: translateY(-2px); }
+.btn-ignore:hover { background: rgba(255,255,255,0.05); }
+</style>
 
 
 
@@ -490,6 +576,30 @@ body, html {
     <div class="progress-container">
         <div id="progress"></div>
     </div>
+	
+	<div id="crash-overlay" class="crash-overlay" style="display: none;">
+		<div class="crash-box">
+			<div class="crash-header">
+				<span id="crash-header-title">FALLO CRÍTICO</span>
+				<button onclick="cerrarCrash()">✕</button>
+			</div>
+			<div class="crash-content">
+				<div id="crash-details">
+					<p class="crash-main-text" id="crash-main-text">...</p>
+					<p class="crash-sub-text" data-i18n="crash_info">...</p>
+					<div class="log-preview" id="log-preview-area"></div>
+				</div>
+				<div class="crash-footer">
+					<button class="btn-send" onclick="enviarReporte()">
+						<span data-i18n="btn_send_report">ENVIAR Y CERRAR</span>
+					</button>
+					<button class="btn-ignore" onclick="cerrarCrash()">
+						<span data-i18n="btn_ignore">IGNORAR</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 
@@ -516,7 +626,18 @@ body, html {
             status_opening: "Abriendo el juego",
             menu_repair: "Reparar archivos",
             menu_update: "Buscar actualizaciones",
-            menu_dev: "Empaquetar Dev"
+            menu_dev: "Empaquetar Dev",
+			game_crashed: "El juego no se cerro correctamente",
+			game_closed: "Juego cerrado",
+			game_error: "Error detectado",
+			crash_title: "FALLO CRÍTICO",
+			crash_msg: "El juego se ha cerrado de forma inesperada. ¿Deseas enviar un reporte de error a los desarrolladores?",
+			error_msg: "Se ha detectado un error en el juego. ¿Deseas enviar un reporte de error a los desarrolladores?",
+			crash_info: "Esto incluirá logs del juego, especificaciones de hardware y datos útiles para la depuración.",
+			btn_send_report: "ENVIAR Y CERRAR",
+			btn_ignore: "IGNORAR",
+			crash_nodetails: "No hay datos de registro adicionales disponibles.",
+			error_title: "ERROR DETECTADO.",
         },
         en: {
             text: "{text}",
@@ -535,7 +656,18 @@ body, html {
             status_opening: "Opening game",
             menu_repair: "Repair files",
             menu_update: "Check for updates",
-            menu_dev: "Package Dev"
+            menu_dev: "Package Dev",
+			game_crashed: "The game did not close properly",
+			game_closed: "Closed game",
+			game_error: "Error detected",
+			crash_title: "CRITICAL FAILURE",
+			crash_msg: "The game closed unexpectedly. Would you like to send an error report to the developers?",
+			error_msg: "An error has been detected in the game. Do you want to submit a bug report to the developers?",
+			crash_info: "This will include game logs, hardware specs, and useful debugging data.",
+			btn_send_report: "SEND AND CLOSE",
+			btn_ignore: "IGNORE",
+			crash_nodetails: "No additional log data available.",
+			error_title: "ERROR DETECTED.",
         }
     };
     
@@ -578,6 +710,63 @@ body, html {
 		
 		logElement.innerText = message;
 		logElement.classList.add('text-animate');
+		
+		// --- DETECTAR CRASH O ERROR ---
+		if (data.key === "game_crashed") {
+			abrirVentanaCrash(message, data.vars, true);
+		}
+		
+		if (data.key === "game_error") {
+			abrirVentanaCrash(message, data.vars, false);
+		}
+	}
+	
+	// Función para controlar la ventana de crash
+	let crashorError = "none";
+	function abrirVentanaCrash(mensajeCompleto, vars, crash) {
+		const lang = getLanguage();
+		const title = document.getElementById("crash-header-title");
+		const modal = document.getElementById("crash-overlay");
+		const logPreview = document.getElementById("log-preview-area");
+		const textMain = document.getElementById("crash-main-text");
+		
+		// Mostramos un pedacito del error en la caja oscura
+		if (crash) {
+			title.innerText = i18n[lang]["crash_title"];
+			textMain.innerText = i18n[lang]["crash_msg"];
+			crashorError = "crash";
+		} else {
+			title.innerText = i18n[lang]["crash_error"];
+			textMain.innerText = i18n[lang]["error_msg"];
+			crashorError = "error";
+		}
+		
+		logPreview.innerText = vars.detail || i18n[lang]["crash_nodetails"];
+		
+		modal.style.display = "flex";
+	}
+
+	function cerrarCrash() {
+		document.getElementById("crash-overlay").style.display = "none";
+	}
+	
+	async function enviarReporte() {
+		const btn = document.querySelector(".btn-send");
+		btn.innerText = "...";
+		btn.disabled = true;
+
+		try {
+			await window.pywebview.api.enviar_reporte_crash(crashorError); 
+			console.log("Enviando datos de Hardware y Logs a los devs...");
+			setTimeout(() => {
+				cerrarCrash();
+				updateUIStatus({key: 'text', vars: {text: 'Reporte enviado con éxito'}});
+			}, 1500);
+			
+		} catch (e) {
+			console.error(e);
+			cerrarCrash();
+		}
 	}
 
     function setProgress(value) {
@@ -592,11 +781,13 @@ body, html {
         isDownloading = true;
         
         const btn = document.getElementById("actionButton");
+		const btnOps = document.getElementById("optionsButton");
         const btnText = document.getElementById("btnText");
         
         btn.style.opacity = "0.7";
         btnText.textContent = langData.btn_downloading;
 		btn.disabled = true;
+		btnOps.disabled = true;
         
         // Usamos la función interna para mostrar el inicio
         updateUIStatus({key: 'status_downloading'});
@@ -612,6 +803,7 @@ body, html {
             isDownloading = false;
             btn.style.opacity = "1";
 			btn.disabled = false;
+			btnOps.disabled = false;
         }
     }
 
