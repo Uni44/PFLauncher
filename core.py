@@ -149,7 +149,7 @@ class LauncherAPI:
     def abrir_juego(self):
         for p in GAME_DATA.glob("*.exe"):
             try:
-                proc = subprocess.Popen([str(p)])
+                proc = subprocess.Popen([str(p), "-source=launcher"])
                 def monitor():
                     proc.wait()
                     exit_code = proc.returncode

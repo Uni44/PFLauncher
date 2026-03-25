@@ -104,12 +104,13 @@ body, html {
 
 .news-panel {
     background: var(--zzz-bg-glass);
-    border-radius: 12px;
     padding: 24px;
     backdrop-filter: blur(15px);
     border: 1px solid var(--zzz-border);
     border-left: 6px solid var(--zzz-yellow);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    /* Corte inclinado en la esquina inferior derecha */
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 92% 100%, 0 100%);
+    box-shadow: 10px 10px 0px rgba(255, 218, 0, 0.05);
 }
 
 .news-tabs { 
@@ -120,10 +121,25 @@ body, html {
     font-size: 14px;
     letter-spacing: 1px;
 }
+.news-tabs { 
+    display: flex; 
+    gap: 10px; 
+    margin-bottom: 20px;
+}
+
+.news-tabs span {
+    padding: 5px 15px;
+    background: rgba(255,255,255,0.05);
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); /* Forma de trapecio */
+    font-size: 12px;
+    color: #888;
+    transition: var(--transition);
+}
+
 .news-tabs .active { 
-    color: var(--zzz-yellow); 
-    border-bottom: 2px solid var(--zzz-yellow);
-    padding-bottom: 4px;
+    color: black; 
+    background: var(--zzz-yellow);
+    font-weight: 900;
 }
 
 .news-item {
@@ -204,6 +220,12 @@ body, html {
     transform: translateY(-5px); 
     box-shadow: 0 10px 40px rgba(255, 218, 0, 0.4);
     background: #fff;
+}
+
+#actionButton:hover .btn-play-icon {
+    background: var(--zzz-yellow); /* Cambia a rosa al hacer hover */
+    transform: rotate(180deg); /* O un giro sutil */
+    color: white;
 }
 
 #actionButton:active { transform: translateY(0); }
@@ -532,10 +554,10 @@ body, html {
             </div>
             <div id="news-list">
 			<a href="assets/test.html">
-                <div class="news-item"><span>Actualización de versión 0.12.2</span> <span>07/03</span></div>
+                <div class="news-item"><span>Notas del Parche v0.12.2</span> <span>25/03</span></div>
 			</a>
 			<a href="assets/test.html">
-                <div class="news-item"><span>Evento «Armonía de delusiones»</span> <span>20/02</span></div>
+                <div class="news-item"><span>Notas del Parche v0.12.2</span> <span>20/02</span></div>
 			</a>
             </div>
         </div>

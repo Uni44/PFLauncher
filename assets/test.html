@@ -3,72 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de Noticia - PF Launcher</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Forum Post // PF Launcher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700;900&family=Roboto:wght@400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --zzz-yellow: #ffda00;
+            --zzz-pink: #ff69b4;
+            --zzz-bg: #0a0a0a;
+            --zzz-card: rgba(15, 15, 15, 0.9);
+            --zzz-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; }
+
         body {
             margin: 0;
-            padding: 40px;
-            background-color: #1a1a1a; /* Fondo oscuro igual al launcher */
-            color: white;
+            padding: 0;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+                url('fondo.png') no-repeat center center fixed;
+            background-size: cover;
+            background-color: var(--zzz-bg);
+            color: #eee;
             font-family: 'Roboto', sans-serif;
+            height: 100vh; /* Altura fija de la ventana */
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* EVITA QUE EL BODY TENGA SCROLL */
+            backdrop-filter: blur(10px);
+        }
+
+        /* --- CONTENEDOR DE SCROLL PARA EL POST --- */
+        .scroll-container {
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
+            justify-content: flex-start; /* Empieza arriba */
+            padding: 60px 20px;
+            overflow-y: auto; /* EL SCROLL SUCEDE AQUÍ */
         }
 
-        h1 {
-            font-family: 'Exo 2', sans-serif;
-            color: #ffda00; /* El amarillo característico */
-            text-transform: uppercase;
-            border-left: 5px solid #ffda00;
-            padding-left: 15px;
-        }
-
-        .content {
-            margin-top: 20px;
-            line-height: 1.6;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .btn-back {
-            margin-top: 30px;
-            padding: 10px 25px;
-            background-color: transparent;
-            color: #ffda00;
-            border: 2px solid #ffda00;
-            border-radius: 50px;
-            font-family: 'Exo 2', sans-serif;
-            font-weight: 700;
+        /* --- BOTÓN FLOTANTE (FUERA DEL SCROLL) --- */
+        .btn-floating-back {
+            position: fixed; /* Ahora sí se clava a la ventana */
+            bottom: 40px;
+            right: 40px;
+            background-color: var(--zzz-yellow);
+            color: #000;
             text-decoration: none;
-            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            padding: 15px 30px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999; 
+            clip-path: polygon(15% 0%, 100% 0%, 85% 100%, 0% 100%);
+            box-shadow: 0 0 20px rgba(255, 218, 0, 0.4);
+            transition: all 0.2s ease;
             cursor: pointer;
         }
 
-        .btn-back:hover {
-            background-color: #ffda00;
-            color: black;
+        .btn-floating-back:hover {
+            transform: scale(1.05);
+            background-color: white;
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- ESTILO DEL POST --- */
+        .forum-post {
+            width: 95%; 
+            max-width: 1000px;
+            background: var(--zzz-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--zzz-border);
+            border-top: 4px solid var(--zzz-yellow);
+            position: relative;
+            clip-path: polygon(5% 0%, 100% 0%, 100% 95%, 95% 100%, 0% 100%, 0% 5%);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            margin-bottom: 40px; /* Espacio al final */
+            flex-shrink: 0; /* Evita que se colapse */
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--zzz-border);
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--zzz-yellow);
+            padding: 2px;
+            background: #000;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 900;
+            color: white;
+            font-size: 20px;
+            text-transform: uppercase;
+        }
+
+        .user-rank {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--zzz-pink);
+        }
+
+        .post-body { padding: 40px; }
+
+        .post-title {
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 900;
+            font-size: 28px;
+            color: var(--zzz-yellow);
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+        }
+
+        .content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Personalización de la barra de scroll */
+        .scroll-container::-webkit-scrollbar { width: 8px; }
+        .scroll-container::-webkit-scrollbar-track { background: transparent; }
+        .scroll-container::-webkit-scrollbar-thumb { 
+            background: var(--zzz-yellow); 
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Título de la Noticia</h1>
+    <a href="../index.html" class="btn-floating-back">
+        <span class="icon">⬅</span>
+        <span>Volver</span>
+    </a>
 
-    <div class="content">
-        <p>Esta es una noticia de prueba cargada desde el archivo local.</p>
-        <p>Aquí puedes verificar si los enlaces están funcionando correctamente dentro de tu aplicación de <strong>pywebview</strong>.</p>
-        <ul>
-            <li>Fecha de publicación: 26/02/2026</li>
-            <li>Categoría: Actualizaciones</li>
-        </ul>
+    <div class="scroll-container">
+        <div class="forum-post">
+            <div class="post-header">
+                <img src="avatar_dev.png" alt="User" class="user-avatar">
+                <div class="user-info">
+                    <span class="user-name">Shirosan</span>
+                    <span class="user-rank">[DEVELOPER]</span>
+                </div>
+                <div style="margin-left: auto; font-family: 'JetBrains Mono'; font-size: 16px;">
+                    25/03/2026
+                </div>
+            </div>
+
+            <div class="post-body">
+                <h2 class="post-title">Notas del Parche v0.12.2</h2>
+                <div class="content">
+                    <p style="color: var(--zzz-yellow);"><strong>Cambios principales:</strong></p>
+                    <ul>
+                        <li>Se pulieron y mejoraron todos los menús para los usuarios de Java.</li>
+                        <li>El NPC Podan ha vuelto al centro de Ruka con misiones diarias.</li>
+                        <li>Se añadieron habilidades a todas las armas míticas de nivel divino.</li>
+                        <li>Nuevo ítem: Moneda de Ruka y sistema de banco.</li>
+                        <li>Nuevo ítem: Pergamino de Desvinculación para gemas.</li>
+                    </ul>
+
+                    <p style="color: var(--zzz-yellow);"><strong>Corrección de errores:</strong></p>
+                    <p>Se corrigió el error donde los jefes soltaban Tótems de inmortalidad apilados y se optimizó el renderizado PBR en generadores industriales.</p>
+					
+					<p style="color: var(--zzz-yellow);"><strong>Cambios principales:</strong></p>
+                    <ul>
+                        <li>Se pulieron y mejoraron todos los menús para los usuarios de Java.</li>
+                        <li>El NPC Podan ha vuelto al centro de Ruka con misiones diarias.</li>
+                        <li>Se añadieron habilidades a todas las armas míticas de nivel divino.</li>
+                        <li>Nuevo ítem: Moneda de Ruka y sistema de banco.</li>
+                        <li>Nuevo ítem: Pergamino de Desvinculación para gemas.</li>
+                    </ul>
+
+                    <p style="color: var(--zzz-yellow);"><strong>Corrección de errores:</strong></p>
+                    <p>Se corrigió el error donde los jefes soltaban Tótems de inmortalidad apilados y se optimizó el renderizado PBR en generadores industriales.</p>
+					
+					<p style="color: var(--zzz-yellow);"><strong>Cambios principales:</strong></p>
+                    <ul>
+                        <li>Se pulieron y mejoraron todos los menús para los usuarios de Java.</li>
+                        <li>El NPC Podan ha vuelto al centro de Ruka con misiones diarias.</li>
+                        <li>Se añadieron habilidades a todas las armas míticas de nivel divino.</li>
+                        <li>Nuevo ítem: Moneda de Ruka y sistema de banco.</li>
+                        <li>Nuevo ítem: Pergamino de Desvinculación para gemas.</li>
+                    </ul>
+
+                    <p style="color: var(--zzz-yellow);"><strong>Corrección de errores:</strong></p>
+                    <p>Se corrigió el error donde los jefes soltaban Tótems de inmortalidad apilados y se optimizó el renderizado PBR en generadores industriales.</p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <a href="../index.html" class="btn-back">← VOLVER AL LAUNCHER</a>
 
 </body>
 </html>
