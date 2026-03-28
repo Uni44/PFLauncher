@@ -758,7 +758,7 @@ body, html {
 			textMain.innerText = i18n[lang]["crash_msg"];
 			crashorError = "crash";
 		} else {
-			title.innerText = i18n[lang]["crash_error"];
+			title.innerText = i18n[lang]["error_title"];
 			textMain.innerText = i18n[lang]["error_msg"];
 			crashorError = "error";
 		}
@@ -773,6 +773,7 @@ body, html {
 	}
 	
 	async function enviarReporte() {
+		const lang = getLanguage();
 		const btn = document.querySelector(".btn-send");
 		btn.innerText = "...";
 		btn.disabled = true;
@@ -789,6 +790,9 @@ body, html {
 			console.error(e);
 			cerrarCrash();
 		}
+		
+		btn.innerText = i18n[lang]["btn_send_report"];
+		btn.disabled = false;
 	}
 
     function setProgress(value) {
