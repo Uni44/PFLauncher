@@ -4,13 +4,13 @@
   "launcher_version": "2.1.1",
   "launcher_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/refs/heads/main/Distribution/Launcher.exe",
 
-  "core_version": "1.6.2",
+  "core_version": "1.6.3",
   "core_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/core.py",
 
   "html_version": "1.6.3",
   "html_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/index.html",
 
-  "assets_version": "1.6.2",
+  "assets_version": "1.6.3",
   "assets_url": "https://raw.githubusercontent.com/Uni44/PFLauncher/main/assets/assets.zip",
 
   "game_version": "0.21.0-dev-20260331-0214",

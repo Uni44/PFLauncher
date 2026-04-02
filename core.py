@@ -320,16 +320,44 @@ class LauncherAPI:
             return f"Error: {e}"
 
     def enviar_reporte_crash(self, crashOrError):
+        API_KEY = "cynex_key_NkjIZiJMxDoIxFHaLTLlLgjin8ZoWIGGnJ7nEVWpQVY"
+        API_URL = "https://supporters-accommodation-new-silly.trycloudflare.com/"
         log_path = GAME_DATA / "log.txt"
         try:
-            mensaje = f"{crashOrError}"
+            params = {
+                "event": str(crashOrError),
+                "error_type": "GameCrash",
+                "severity": "CRITICAL"
+            }
+            
+            headers = {"Authorization": f"Bearer {API_KEY}"}
+            
             if log_path.exists():
                 with open(log_path, "rb") as f:
-                    requests.post(
-                        "https://discord.com/api/webhooks/1486253978474774690/n_xE7LwUPWWwWoTislqa5N8FQjftuXONks-l3TB2VSxuD7VgRcuWXD70he2Izhp_usZk",
-                        data={"content": mensaje},
-                        files={"file": ("log.txt", f, "text/plain; charset=utf-8")}
+                    files = {"file": ("log.txt", f, "text/plain")}
+                    response = requests.post(
+                        f"{API_URL}/api/logs/submit-crash",
+                        params=params,
+                        files=files,
+                        headers=headers,
+                        timeout=10
                     )
+            else:
+                response = requests.post(
+                    f"{API_URL}/api/logs/submit-crash",
+                    params=params,
+                    headers=headers,
+                    timeout=10
+                )
+            
+            if response.status_code == 201:
+                crash_data = response.json()
+                print(f"Crash reportado: {crash_data['id']}")
+                if crash_data.get('log_file_path'):
+                    print(f"Archivo guardado: {crash_data['log_file_path']}")
+            else:
+                print(f"Error: {response.text}")
+                
         except Exception as e:
             print(f"Error enviando crash: {e}")
 
