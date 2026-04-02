@@ -325,8 +325,8 @@ class LauncherAPI:
         log_path = GAME_DATA / "log.txt"
         try:
             params = {
-                "event": str(crashOrError),
-                "error_type": "GameCrash",
+                "event": f"Reporte de launcher {str(crashOrError)}",
+                "error_type": str(crashOrError),
                 "severity": "CRITICAL"
             }
             
