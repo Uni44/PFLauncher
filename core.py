@@ -321,7 +321,7 @@ class LauncherAPI:
 
     def enviar_reporte_crash(self, crashOrError):
         API_KEY = "cynex_key_NkjIZiJMxDoIxFHaLTLlLgjin8ZoWIGGnJ7nEVWpQVY"
-        API_URL = "https://supporters-accommodation-new-silly.trycloudflare.com/"
+        API_URL = "https://evanescence-rebound-nothing-cents.trycloudflare.com/"
         log_path = GAME_DATA / "log.txt"
         try:
             params = {
